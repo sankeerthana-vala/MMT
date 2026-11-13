@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pakka Plans — by MakeMyTrip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A2F6B;
+    --ink-2:#123B85;
+    --red:#E8262F;
+    --red-dark:#B71C22;
+    --red-soft:#FBE2E3;
+    --gold:#F5A623;
+    --gold-soft:#FDECC8;
+    --marigold:#F5A623;
+    --paper:#F7F9FC;
+    --paper-2:#EEF2FA;
+    --teal:#1DA57A;
+    --teal-soft:#DDF3EA;
+    --coral:#93394A;
+    --coral-soft:#F3DEE2;
+    --text:#101828;
+    --muted:#667085;
+    --line:#DCE3F0;
+    --page-bg:#E7EBF3;
+    --shell-shadow: 0 40px 80px -30px rgba(10,47,107,.45), 0 10px 25px -10px rgba(10,47,107,.3);
+    --serif: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#0B0E14;
+    }
+  }
+  :root[data-theme="dark"]{ --page-bg:#0B0E14; }
+
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0;
+    min-height:100%;
+    background:var(--page-bg);
+    font-family:var(--sans);
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+    padding-top:calc(32px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));
+  }
+
+  /* ---------- Device shell ---------- */
+  .shell{
+    width:100%;
+    max-width:412px;
+    height:min(890px, 92vh);
+    background:var(--paper);
+    border-radius:38px;
+    box-shadow:var(--shell-shadow);
+    border:10px solid var(--ink);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  @media (max-width:460px){
+    body{padding:0;}
+    .shell{
+      max-width:100%;
+      height:100dvh;
+      border-radius:0;
+      border:none;
+      box-shadow:none;
+    }
+  }
+  .notch{
+    position:absolute;
+    top:0; left:50%; transform:translateX(-50%);
+    width:120px; height:24px;
+    background:var(--ink);
+    border-radius:0 0 16px 16px;
+    z-index:40;
+  }
+  @media (max-width:460px){ .notch{display:none;} }
+
+  /* ---------- App bar ---------- */
+  .appbar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:#fff;
+    padding:calc(32px + env(safe-area-inset-top,0px)) 18px 12px;
+    border-bottom:1px solid var(--line);
+    flex-shrink:0;
+  }
+  .icon-btn{
+    background:none; border:none; padding:4px; margin:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink); position:relative; flex-shrink:0;
+  }
+  .icon-btn .dot{
+    position:absolute; top:1px; right:1px; width:7px; height:7px;
+    border-radius:50%; background:var(--red); border:1.5px solid #fff;
+  }
+  .app-word{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:17.5px;
+    letter-spacing:-.01em;
+  }
+  .app-word .make{ color:var(--ink); }
+  .app-word .trip{ color:var(--red); }
+  @media (max-width:460px){ .appbar{ padding-top:calc(14px + env(safe-area-inset-top,0px)); } }
+
+  /* ---------- Screens ---------- */
+  .screens{
+    flex:1;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    background:var(--paper);
+  }
+  .screen{ display:none; padding:20px 20px 28px; animation:rise .32s ease; }
+  .screen.active{ display:block; }
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ .screen{animation:none;} }
+
+  h2.section-title{
+    font-family:var(--serif);
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 4px;
+    letter-spacing:-.01em;
+  }
+  p.section-desc{
+    margin:0 0 16px;
+    font-size:13.5px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .card + .card{margin-top:14px;}
+
+  /* Home screen */
+  .greet{ font-size:13px; color:var(--muted); margin-bottom:14px; }
+  .greet b{ color:var(--text); }
+  .myra-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:100px;
+    padding:11px 8px 11px 16px;
+    margin-bottom:18px;
+    cursor:pointer;
+  }
+  .myra-bar .spark{ color:var(--ink-2); flex-shrink:0; }
+  .myra-bar input{
+    border:none; outline:none; flex:1; font-family:var(--sans);
+    font-size:13.5px; background:transparent; color:var(--muted); pointer-events:none;
+  }
+  .myra-bar .send{
+    width:32px; height:32px; border-radius:50%;
+    background:var(--ink-2); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .chips{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:20px; }
+  .chip{
+    flex-shrink:0;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:9px 13px;
+    border-radius:100px;
+    font-size:12.5px;
+    font-weight:500;
+    display:flex; align-items:center; gap:6px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .chip:active{ transform:scale(.97); }
+
+  .trip-card{
+    display:flex; gap:12px; align-items:center;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:16px;
+    padding:14px;
+    margin-bottom:22px;
+    cursor:pointer;
+  }
+  .trip-card .thumb{
+    width:74px; height:74px; border-radius:13px; flex-shrink:0;
+    overflow:hidden;
+  }
+  .trip-card .thumb svg{ width:100%; height:100%; display:block; }
+  .trip-card .meta{ flex:1; min-width:0; }
+  .trip-card .meta .label{ font-size:11px; font-weight:700; color:var(--ink-2); text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+  .trip-card .meta .name{ font-family:var(--serif); font-size:15.5px; font-weight:700; margin-bottom:2px; color:var(--text); }
+  .trip-card .meta .info{ font-size:12px; color:var(--muted); }
+  .badge-pakka{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:10.5px; font-weight:700;
+    background:var(--teal-soft);
+    color:var(--teal);
+    padding:3px 8px;
+    border-radius:100px;
+    margin-top:7px;
+  }
+
+  .cat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    margin-bottom:24px;
+  }
+  .cat-tile{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    border-radius:14px;
+    padding:14px 6px 12px;
+  }
+  .cat-tile .cat-ic{ width:26px; height:26px; }
+  .cat-tile .cat-l{ font-size:11.5px; font-weight:600; color:var(--text); }
+
+  .feature-row{
+    display:flex; gap:12px; padding:13px 2px;
+    border-bottom:1px solid var(--line);
+    align-items:flex-start;
+    cursor:pointer;
+  }
+  .feature-row:last-child{ border-bottom:none; }
+  .feature-row .icon{
+    width:38px; height:38px; border-radius:11px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .feature-row .txt .t{ font-weight:600; font-size:13.5px; margin-bottom:2px; }
+  .feature-row .txt .d{ font-size:12px; color:var(--muted); line-height:1.4; }
+  .feature-row .arrow{ margin-left:auto; color:var(--muted); align-self:center; }
+
+  /* Buttons */
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--red);
+    color:#fff;
+    border:none;
+    border-radius:13px;
+    padding:14px;
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    width:100%;
+    cursor:pointer;
+  }
+  .btn:active{ opacity:.85; }
+  .btn.marigold{ background:var(--gold); color:#3D2600; }
+  .btn.outline{ background:transparent; border:1.5px solid var(--ink); color:var(--ink); }
+  .btn.ghost{ background:transparent; color:var(--ink); font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+  .btn[disabled]{ opacity:.5; pointer-events:none; }
+  .btn-sm{ padding:9px 14px; font-size:12.5px; border-radius:10px; width:auto; }
+
+  /* Reel-to-Pakka */
+  .reel-input{
+    border:1.5px dashed var(--line);
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    margin-bottom:14px;
+    background:var(--paper-2);
+  }
+  .reel-input .ic{
+    width:42px; height:42px; margin:0 auto 10px; border-radius:12px;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+  }
+  .reel-input .link-preview{
+    display:none;
+    text-align:left;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px;
+    margin-top:12px;
+    gap:10px;
+    align-items:center;
+  }
+  .reel-input .link-preview.show{ display:flex; }
+  .reel-input .link-preview .thumb{
+    width:44px; height:44px; border-radius:9px; flex-shrink:0;
+    background:linear-gradient(160deg,var(--gold),var(--red));
+  }
+  .reel-input .link-preview .lp-t{ font-size:12.5px; font-weight:600; line-height:1.35; }
+  .reel-input .link-preview .lp-s{ font-size:11px; color:var(--muted); }
+
+  .loading-row{
+    display:none; align-items:center; gap:10px;
+    padding:14px; background:var(--paper-2); border-radius:12px; margin-bottom:14px;
+    font-size:13px; color:var(--ink);
+  }
+  .loading-row.show{ display:flex; }
+  .spinner{
+    width:16px; height:16px; border-radius:50%;
+    border:2.5px solid var(--line); border-top-color:var(--ink);
+    animation:spin .7s linear infinite; flex-shrink:0;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .verify-list{ display:none; }
+  .verify-list.show{ display:block; animation:rise .35s ease; }
+  .vitem{
+    display:flex; gap:11px; padding:12px 0; border-bottom:1px solid var(--line);
+  }
+  .vitem:last-child{ border-bottom:none; }
+  .vitem .status{
+    width:24px; height:24px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; margin-top:1px;
+  }
+  .status.ok{ background:var(--teal-soft); color:var(--teal); }
+  .status.warn{ background:#FCEFD8; color:#9A6B0E; }
+  .status.bad{ background:var(--coral-soft); color:var(--coral); }
+  .vitem .v-t{ font-size:13.5px; font-weight:600; margin-bottom:2px; }
+  .vitem .v-d{ font-size:12px; color:var(--muted); line-height:1.4; }
+  .vitem .v-tag{ font-size:11px; margin-top:4px; display:inline-block; font-weight:600; }
+  .vitem .v-tag.ok{ color:var(--teal); }
+  .vitem .v-tag.warn{ color:#9A6B0E; }
+  .vitem .v-tag.bad{ color:var(--coral); }
+
+  .promise-note{
+    display:none;
+    font-size:11.5px; color:var(--muted); text-align:center; margin-top:10px; line-height:1.5;
+  }
+  .promise-note.show{ display:block; }
+
+  /* Squad mode */
+  .avatars{ display:flex; margin-bottom:14px; }
+  .avatars .av{
+    width:38px; height:38px; border-radius:50%; border:2.5px solid var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:#fff;
+    margin-left:-10px;
+  }
+  .avatars .av:first-child{ margin-left:0; }
+  .timer{
+    display:flex; align-items:center; gap:8px;
+    background:var(--paper-2);
+    border-radius:12px;
+    padding:11px 13px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:16px;
+  }
+  .timer .num{ color:var(--red); font-variant-numeric:tabular-nums; }
+
+  .poll-opt{
+    border:1.5px solid var(--line);
+    border-radius:13px;
+    padding:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+  }
+  .poll-opt.selected{ border-color:var(--ink); }
+  .poll-opt .fill{
+    position:absolute; left:0; top:0; bottom:0;
+    background:var(--paper-2);
+    z-index:0;
+    transition:width .4s ease;
+  }
+  .poll-opt .row{ position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; }
+  .poll-opt .t{ font-size:13.5px; font-weight:600; }
+  .poll-opt .s{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .poll-opt .pct{ font-size:13px; font-weight:700; color:var(--ink); }
+
+  .activity{ font-size:12.5px; color:var(--muted); padding:8px 0; border-bottom:1px solid var(--line); }
+  .activity:last-child{ border:none; }
+  .activity b{ color:var(--text); }
+
+  .split-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid var(--line); font-size:13px;
+  }
+  .split-row:last-of-type{ border-bottom:none; }
+  .split-row .who{ display:flex; align-items:center; gap:8px; }
+  .split-row .who .dot{ width:8px; height:8px; border-radius:50%; }
+  .split-row .amt{ font-weight:600; }
+  .split-row .status-tag{ font-size:11px; padding:3px 8px; border-radius:100px; font-weight:600; }
+  .status-tag.paid{ background:var(--teal-soft); color:var(--teal); }
+  .status-tag.pending{ background:#FCEFD8; color:#9A6B0E; }
+
+  /* Guardian */
+  .rule-box{
+    background:var(--paper-2);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:16px;
+    font-size:13px;
+    line-height:1.6;
+  }
+  .dial-option{
+    display:flex; gap:11px; align-items:flex-start;
+    border:1.5px solid var(--line);
+    border-radius:13px;
+    padding:12px 13px;
+    margin-bottom:9px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .dial-option.selected{ border-color:var(--ink); background:var(--paper-2); }
+  .do-radio{
+    width:18px; height:18px; border-radius:50%;
+    border:2px solid var(--line); flex-shrink:0; margin-top:1px;
+    position:relative;
+  }
+  .dial-option.selected .do-radio{ border-color:var(--ink); }
+  .dial-option.selected .do-radio::after{
+    content:''; position:absolute; inset:3px; border-radius:50%; background:var(--ink);
+  }
+  .do-t{ font-size:13.5px; font-weight:600; margin-bottom:2px; }
+  .do-d{ font-size:12px; color:var(--muted); line-height:1.4; }
+  .dial-threshold{
+    background:var(--gold-soft);
+    color:#7A4B00;
+    border-radius:12px;
+    padding:11px 13px;
+    font-size:12px;
+    line-height:1.6;
+    margin-top:8px;
+  }
+  .toggle-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:11px 0; border-bottom:1px solid var(--line);
+  }
+  .toggle-row:last-child{ border-bottom:none; }
+  .toggle-row .t{ font-size:13.5px; font-weight:600; }
+  .toggle-row .d{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .switch{
+    width:42px; height:24px; border-radius:100px; background:var(--line);
+    position:relative; cursor:pointer; flex-shrink:0; transition:background .2s;
+  }
+  .switch.on{ background:var(--teal); }
+  .switch::after{
+    content:''; position:absolute; top:3px; left:3px;
+    width:18px; height:18px; border-radius:50%; background:#fff;
+    transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.25);
+  }
+  .switch.on::after{ transform:translateX(18px); }
+
+  .flight-status{
+    display:flex; gap:12px; align-items:center;
+    background:var(--ink); color:#fff;
+    border-radius:14px; padding:14px; margin-bottom:14px;
+  }
+  .flight-status .plane{
+    width:40px; height:40px; border-radius:10px; background:rgba(240,169,59,.2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .flight-status .fs-t{ font-weight:600; font-size:13.5px; }
+  .flight-status .fs-d{ font-size:11.5px; color:#B9C4D6; margin-top:2px; }
+  .flight-status .fs-tag{
+    margin-left:auto; font-size:10.5px; font-weight:700; padding:4px 8px; border-radius:100px;
+    background:rgba(221,91,65,.22); color:#FF9B85; flex-shrink:0;
+  }
+
+  .steps{ margin-bottom:6px; }
+  .step{
+    display:flex; gap:12px; padding-bottom:16px; position:relative;
+  }
+  .step:last-child{ padding-bottom:0; }
+  .step .dotline{
+    display:flex; flex-direction:column; align-items:center; flex-shrink:0;
+  }
+  .step .sdot{
+    width:20px; height:20px; border-radius:50%;
+    background:var(--line); display:flex; align-items:center; justify-content:center;
+    font-size:10.5px; color:#fff; flex-shrink:0; transition:background .25s;
+  }
+  .step .sdot.done{ background:var(--teal); }
+  .step .sdot.active{ background:var(--marigold); }
+  .step .sline{ width:2px; flex:1; background:var(--line); margin-top:2px; }
+  .step .sdot.done ~ .sline{ background:var(--teal); }
+  .step .stxt .st-t{ font-size:13px; font-weight:600; padding-top:1px; }
+  .step .stxt .st-d{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  /* Memory */
+  .dna-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .dna-chip{
+    background:#fff; border:1px solid var(--line); border-radius:100px;
+    padding:8px 12px; font-size:12px; font-weight:500;
+    display:flex; align-items:center; gap:6px;
+  }
+  .dna-chip .x{ color:var(--muted); font-size:11px; cursor:pointer; }
+
+  .tier-card{
+    background:linear-gradient(135deg,var(--ink-2),var(--ink));
+    color:#fff; border-radius:16px; padding:16px; margin-bottom:16px;
+  }
+  .tier-card .tt{ font-family:var(--serif); font-size:16px; font-weight:600; }
+  .tier-card .ts{ font-size:12px; color:#B9C4D6; margin-top:3px; }
+  .tier-card .pts{ font-size:26px; font-weight:700; margin-top:10px; font-variant-numeric:tabular-nums; }
+  .tier-card .ptsl{ font-size:11px; color:#B9C4D6; }
+
+  .memory-card{
+    display:flex; gap:12px; align-items:center;
+    border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px;
+  }
+  .memory-card .mthumb{
+    width:50px; height:50px; border-radius:11px; flex-shrink:0;
+  }
+  .memory-card .mt{ font-size:13.5px; font-weight:600; }
+  .memory-card .ms{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  /* Bottom nav */
+  .navbar{
+    display:flex;
+    background:#fff;
+    border-top:1px solid var(--line);
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom,0px));
+    flex-shrink:0;
+  }
+  .navbtn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    background:none; border:none; cursor:pointer; padding:4px 2px;
+    color:var(--muted); font-family:var(--sans); font-size:10px; font-weight:600;
+  }
+  .navbtn.active{ color:var(--red); }
+  .navbtn{ white-space:nowrap; letter-spacing:-.01em; }
+  .navbtn svg{ width:21px; height:21px; }
+
+  /* Modal-ish myra sheet */
+  .sheet-backdrop{
+    position:absolute; inset:0; background:rgba(11,15,20,.4);
+    display:none; z-index:50; align-items:flex-end;
+  }
+  .sheet-backdrop.show{ display:flex; }
+  .sheet{
+    background:var(--paper); width:100%; border-radius:22px 22px 0 0;
+    padding:20px 20px calc(22px + env(safe-area-inset-bottom,0px));
+    animation:sheetUp .28s ease;
+  }
+  @keyframes sheetUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .sheet .handle{ width:36px; height:4px; border-radius:100px; background:var(--line); margin:0 auto 16px; }
+
+  /* ---------- Live trip ---------- */
+  .live-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .lh-t{ font-family:var(--serif); font-size:17px; font-weight:700; }
+  .lh-s{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .weather-chip{
+    background:var(--paper-2); border:1px solid var(--line); border-radius:100px;
+    padding:6px 11px; font-size:11.5px; font-weight:600; white-space:nowrap;
+  }
+  .step.next .stxt{ flex:1; background:var(--gold-soft); border-radius:10px; padding:6px 10px; margin-top:-4px; }
+  .tm{ font-variant-numeric:tabular-nums; color:var(--ink-2); font-weight:700; }
+  .next-tag{
+    display:inline-block; margin-left:6px; font-size:9.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; background:var(--gold); color:#3D2600; padding:2px 6px; border-radius:100px;
+    vertical-align:1px;
+  }
+  .moved-tag{
+    display:inline-block; margin-left:6px; font-size:9.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; background:var(--teal-soft); color:var(--teal); padding:2px 6px; border-radius:100px;
+    vertical-align:1px;
+  }
+  .nudge{
+    background:var(--gold-soft); border:1px solid #F2D79A; border-radius:14px;
+    padding:14px; margin-bottom:14px;
+  }
+  .nudge-t{ font-weight:700; font-size:14px; margin-bottom:3px; color:#5A3800; }
+  .nudge-d{ font-size:12.5px; color:#7A4B00; line-height:1.5; margin-bottom:12px; }
+  .nudge.done{ background:var(--teal-soft); border-color:#BFE3D7; }
+  .nudge.done .nudge-t{ color:var(--teal); }
+  .nudge.done .nudge-d{ color:var(--text); margin-bottom:0; }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ padding:11px; }
+  .note-av{
+    width:32px; height:32px; border-radius:50%; background:var(--teal); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;
+  }
+  .exp-done{
+    background:var(--teal-soft); color:var(--teal); border-radius:12px;
+    padding:11px 13px; font-size:12.5px; font-weight:600; text-align:center;
+  }
+  .badge-live{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:10.5px; font-weight:700; background:var(--red-soft); color:var(--red);
+    padding:3px 9px; border-radius:100px; margin-top:7px;
+  }
+  .live-dot{ width:7px; height:7px; border-radius:50%; background:var(--red); animation:pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:.35; transform:scale(.8);} }
+  @media (prefers-reduced-motion: reduce){ .live-dot{ animation:none; } }
+  .new-tag{
+    font-size:9px; font-weight:700; color:var(--teal); background:var(--teal-soft);
+    padding:1px 6px; border-radius:100px;
+  }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="notch"></div>
+
+  <!-- ============ APP BAR ============ -->
+  <div class="appbar">
+    <button class="icon-btn" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6H20M4 12H20M4 18H20" stroke-linecap="round"/></svg>
+    </button>
+    <div class="app-word"><span class="make">Make</span><span class="make">My</span><span class="trip">Trip</span></div>
+    <button class="icon-btn" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 0 1 12 0v5l1.5 3h-15L6 14V9Z" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" stroke-linecap="round"/></svg>
+      <span class="dot"></span>
+    </button>
+  </div>
+
+  <!-- ============ SCREENS ============ -->
+  <div class="screens">
+
+    <!-- HOME -->
+    <div class="screen active" data-screen="home">
+      <div class="greet">Good evening, <b>Aisha</b> 👋</div>
+
+      <div class="myra-bar" onclick="openSheet()">
+        <svg class="spark" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z"/></svg>
+        <input placeholder="Paste a plan, reel or ask anything…">
+        <div class="send"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+      </div>
+
+      <div class="trip-card" onclick="go('guardian')">
+        <div class="thumb">
+          <svg viewBox="0 0 74 74" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8FD3F4"/><stop offset="1" stop-color="#C6ECFB"/>
+              </linearGradient>
+              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#1E9AA8"/><stop offset="1" stop-color="#0F6E7C"/>
+              </linearGradient>
+            </defs>
+            <rect width="74" height="74" fill="url(#sky)"/>
+            <circle cx="58" cy="14" r="7" fill="#FDD877"/>
+            <rect y="42" width="74" height="32" fill="url(#sea)"/>
+            <path d="M0 42 Q10 38 20 42 T40 42 T60 42 T74 42 V74 H0 Z" fill="#E8DBB0"/>
+            <path d="M14 74C14 58 12 50 6 44" stroke="#5C4324" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M14 46C10 42 5 41 2 44M14 46C17 41 22 41 25 43M14 50C10 47 6 47 3 49M14 50C18 47 22 48 24 50" stroke="#2F7A3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M60 74C60 62 63 55 68 50" stroke="#5C4324" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M60 52C56 48 52 48 49 50M60 52C64 48 68 49 70 51" stroke="#2F7A3C" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="label">Your current trip</div>
+          <div class="name">Goa with friends</div>
+          <div class="info">Day 2 of 4</div>
+          <div class="badge-live"><span class="live-dot"></span>Live</div>
+        </div>
+      </div>
+
+      <div class="cat-grid">
+        <div class="cat-tile" style="background:#E4EEFB;">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="#1D5FB8" stroke-width="1.8"><path d="M2 16L22 8L20 13L12 16L14 21L11 22L8 17L3 18L2 16Z" stroke-linejoin="round"/></svg>
+          <div class="cat-l">Flights</div>
+        </div>
+        <div class="cat-tile" style="background:var(--red-soft);">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8"><path d="M3 19V9M3 14H21V19M7 14V10a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="11.5" r="1.2" fill="var(--red)" stroke="none"/></svg>
+          <div class="cat-l">Hotels</div>
+        </div>
+        <div class="cat-tile" style="background:var(--teal-soft);">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8"><path d="M12 3C9 7 7 10 7 13a5 5 0 0 0 10 0c0-3-2-6-5-10Z" stroke-linejoin="round"/><path d="M12 21V13" stroke-linecap="round"/></svg>
+          <div class="cat-l">Holidays</div>
+        </div>
+        <div class="cat-tile" style="background:#ECE6FA;">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="#6B4FCC" stroke-width="1.8"><rect x="5" y="4" width="14" height="13" rx="3"/><path d="M5 13H19M9 21L7.5 17M15 21L16.5 17" stroke-linecap="round"/><circle cx="9" cy="15" r="0.6" fill="#6B4FCC" stroke="none"/><circle cx="15" cy="15" r="0.6" fill="#6B4FCC" stroke="none"/></svg>
+          <div class="cat-l">Trains</div>
+        </div>
+        <div class="cat-tile" style="background:var(--gold-soft);">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="#B5790A" stroke-width="1.8"><path d="M4 16V11L6 6H18L20 11V16" stroke-linejoin="round"/><path d="M2 16H22" stroke-linecap="round"/><circle cx="7" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/></svg>
+          <div class="cat-l">Cabs</div>
+        </div>
+        <div class="cat-tile" style="background:#FBE4D6;">
+          <svg class="cat-ic" viewBox="0 0 24 24" fill="none" stroke="#C4571A" stroke-width="1.8"><rect x="3" y="6" width="18" height="11" rx="2"/><path d="M3 12H21M7 17V19M17 17V19" stroke-linecap="round"/><circle cx="7" cy="14.3" r="0.6" fill="#C4571A" stroke="none"/><circle cx="17" cy="14.3" r="0.6" fill="#C4571A" stroke="none"/></svg>
+          <div class="cat-l">Bus</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Pakka Plans, inside your app</h2>
+      <p class="section-desc">The four ways MMT turns any idea into a verified, protected trip</p>
+      <div class="card" style="padding:4px 14px;">
+        <div class="feature-row" onclick="go('reel')">
+          <div class="icon" style="background:#FCEFD8;">📎</div>
+          <div class="txt">
+            <div class="t">Reel-to-Pakka</div>
+            <div class="d">Any reel or screenshot, turned into a verified, bookable plan</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="feature-row" onclick="go('squad')">
+          <div class="icon" style="background:#DCEEE9;">👥</div>
+          <div class="txt">
+            <div class="t">Squad Mode</div>
+            <div class="d">Poll the group, hold the fare, split the bill</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="feature-row" onclick="go('guardian')">
+          <div class="icon" style="background:#FBE4DD;">🛡️</div>
+          <div class="txt">
+            <div class="t">Trip Guardian</div>
+            <div class="d">Watches your flight and hotel, and fixes trouble for you</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="feature-row" onclick="go('memory')">
+          <div class="icon" style="background:#EFE7F7;">👤</div>
+          <div class="txt">
+            <div class="t">My Account</div>
+            <div class="d">Preferences, OneCircle points and your travel memories</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REEL TO PAKKA -->
+    <div class="screen" data-screen="reel">
+      <h2 class="section-title">Reel-to-Pakka</h2>
+      <p class="section-desc">Drop in anything that inspired you. Myra checks every place against live inventory before you book it.</p>
+
+      <div class="reel-input" id="reelInput">
+        <div class="ic">🎬</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:3px;">Paste a reel, screenshot or itinerary</div>
+        <div style="font-size:11.5px; color:var(--muted); margin-bottom:12px;">Instagram, YouTube, WhatsApp forward or a ChatGPT plan — all work</div>
+        <button class="btn marigold btn-sm" style="margin:0 auto;" onclick="simulateReel()">Try a sample reel</button>
+        <div class="link-preview" id="linkPreview">
+          <div class="thumb"></div>
+          <div>
+            <div class="lp-t">"Goa on a shoestring: 3 days, 3 beaches"</div>
+            <div class="lp-s">reel · @wanderwithnina · 2.1M views</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="loading-row" id="loadingRow">
+        <div class="spinner"></div>
+        Checking against MMT inventory and live prices…
+      </div>
+
+      <div class="verify-list" id="verifyList">
+        <div class="vitem">
+          <div class="status ok">✓</div>
+          <div>
+            <div class="v-t">Anjuna Beach sunset, Day 1</div>
+            <div class="v-d">Free · open daily · matches the reel exactly</div>
+            <div class="v-tag ok">Verified &amp; bookable</div>
+          </div>
+        </div>
+        <div class="vitem">
+          <div class="status warn">!</div>
+          <div>
+            <div class="v-t">Curlies Beach Shack, dinner</div>
+            <div class="v-d">Price has moved since the reel was posted</div>
+            <div class="v-tag warn">Changed — now ₹1,450 for two (+15%)</div>
+          </div>
+        </div>
+        <div class="vitem">
+          <div class="status bad">✕</div>
+          <div>
+            <div class="v-t">Butterfly Beach boat trip</div>
+            <div class="v-d">This operator isn't taking bookings this week</div>
+            <div class="v-tag bad">Sold out — try Grand Island snorkelling instead</div>
+          </div>
+        </div>
+        <div class="vitem">
+          <div class="status ok">✓</div>
+          <div>
+            <div class="v-t">Cuba Goa hostel, 2 nights</div>
+            <div class="v-d">Anjuna · rated 4.4 · 6 rooms left</div>
+            <div class="v-tag ok">Verified &amp; bookable — ₹1,800 / night</div>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:6px;" onclick="go('squad')">Add to trip — ₹5,050</button>
+        <div style="font-size:11.5px; color:var(--muted); text-align:center; margin-top:8px; line-height:1.5;">₹3,600 stay (2 nights) + ₹1,450 dinner at today’s price. The sold-out item is left out.</div>
+        <div class="promise-note show">Backed by the Pakka Promise: if a verified price or slot changes before you travel, we fix it or make it right.</div>
+      </div>
+    </div>
+
+    <!-- SQUAD MODE -->
+    <div class="screen" data-screen="squad">
+      <h2 class="section-title">Squad Mode</h2>
+      <p class="section-desc">Goa Girls Trip · shared from your WhatsApp group</p>
+
+      <div class="avatars">
+        <div class="av" style="background:var(--red);">A</div>
+        <div class="av" style="background:var(--teal);">P</div>
+        <div class="av" style="background:var(--gold); color:#3D2600;">R</div>
+        <div class="av" style="background:var(--ink-2);">M</div>
+      </div>
+
+      <div class="timer">⏳ Fare held for the group — <span class="num" id="fareTimer">02:44:58</span></div>
+
+      <h2 class="section-title">Vote on dates &amp; budget</h2>
+      <div class="poll-opt" onclick="votePoll(this,62)">
+        <div class="fill" style="width:62%;"></div>
+        <div class="row"><div><div class="t">12–15 Dec · ₹18k/head</div><div class="s">3 votes · Anjuna homestay</div></div><div class="pct">62%</div></div>
+      </div>
+      <div class="poll-opt" onclick="votePoll(this,38)">
+        <div class="fill" style="width:38%;"></div>
+        <div class="row"><div><div class="t">19–22 Dec · ₹15k/head</div><div class="s">1 vote · Baga hostel</div></div><div class="pct">38%</div></div>
+      </div>
+
+      <h2 class="section-title">Worth it, says your squad</h2>
+      <p class="section-desc">Judgment calls travellers trust people for, not AI</p>
+      <div class="card" style="padding:4px 14px;">
+        <div class="feature-row">
+          <div class="icon" style="background:var(--teal-soft); color:var(--teal); font-size:15px;">✓</div>
+          <div class="txt">
+            <div class="t">Anjuna homestay <span style="color:var(--muted); font-weight:500;">— marked by Priya</span></div>
+            <div class="d">"Stayed here in March, the rooftop is worth the extra ₹500"</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="icon" style="background:var(--coral-soft); color:var(--coral); font-size:15px;">✕</div>
+          <div class="txt">
+            <div class="t">Tito's Lane club night <span style="color:var(--muted); font-weight:500;">— marked by Rhea</span></div>
+            <div class="d">"Overpriced for what it is, skip it"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h2 class="section-title" style="font-size:14.5px;">Activity</h2>
+        <div class="activity"><b>Priya</b> voted for 12–15 Dec</div>
+        <div class="activity"><b>Myra</b> held 4 seats at the Anjuna homestay</div>
+        <div class="activity"><b>Rhea</b> joined the trip room</div>
+      </div>
+
+      <h2 class="section-title">Split payment · UPI</h2>
+      <div class="card">
+        <div class="split-row"><div class="who"><div class="dot" style="background:var(--red);"></div>Aisha (you)</div><div><span class="amt">₹4,250</span> <span class="status-tag pending" style="margin-left:6px;">Pending</span></div></div>
+        <div class="split-row"><div class="who"><div class="dot" style="background:var(--teal);"></div>Priya</div><div><span class="amt">₹4,250</span> <span class="status-tag paid" style="margin-left:6px;">Paid</span></div></div>
+        <div class="split-row"><div class="who"><div class="dot" style="background:var(--gold);"></div>Rhea</div><div><span class="amt">₹4,250</span> <span class="status-tag paid" style="margin-left:6px;">Paid</span></div></div>
+        <div class="split-row"><div class="who"><div class="dot" style="background:var(--ink-2);"></div>Meher</div><div><span class="amt">₹4,250</span> <span class="status-tag pending" style="margin-left:6px;">Pending</span></div></div>
+      </div>
+      <button class="btn">Pay your share — ₹4,250</button>
+    </div>
+
+
+    <!-- TRIP GUARDIAN -->
+    <div class="screen" data-screen="guardian">
+
+      <!-- LIVE TRIP (default view) -->
+      <div id="gLive">
+        <div class="card live-head">
+          <div>
+            <div class="lh-t">Goa · Day 2 of 4</div>
+            <div class="lh-s">13 Dec · 4 travellers</div>
+          </div>
+          <div class="weather-chip">🌦 31° · rain 4–6pm</div>
+        </div>
+
+        <h2 class="section-title" style="font-size:14.5px; margin-top:4px;">Today’s plan</h2>
+        <div class="steps" id="todayPlan"></div>
+
+        <div class="badge-pakka" style="margin:2px 0 16px;">🛡 Watching 2 bookings · all clear</div>
+
+        <div class="nudge" id="nudge">
+          <div class="nudge-t">Rain forecast 4–6pm</div>
+          <div class="nudge-d">Move snorkelling to tomorrow 13:00? Same price, slot held for 20 minutes.</div>
+          <div class="btn-row">
+            <button class="btn" onclick="resolveNudge(true)">Move it</button>
+            <button class="btn outline" onclick="resolveNudge(false)">Keep as is</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title" style="font-size:14.5px;">Guardian log</h2>
+          <div id="gLog"></div>
+        </div>
+
+        <div class="card" style="margin-top:0;">
+          <div style="display:flex; gap:11px; align-items:flex-start; margin-bottom:12px;">
+            <div class="note-av">P</div>
+            <div style="font-size:13px; line-height:1.45;"><b>Priya</b> added a note<div style="color:var(--muted);">“Tito’s is packed, skip it”</div></div>
+          </div>
+          <div id="expWrap"><button class="btn outline" onclick="addExpense()">+ Add a shared expense</button></div>
+        </div>
+
+        <button class="btn outline" onclick="showGuardian('delay')">Something gone wrong? ›</button>
+      </div>
+
+      <!-- DELAY / REBOOK FLOW (unchanged) -->
+      <div id="gDelay" style="display:none;">
+      <button class="btn ghost" style="width:auto; padding:0 0 12px;" onclick="showGuardian('live')">‹ Back to live trip</button>
+      <h2 class="section-title">Trip Guardian</h2>
+      <p class="section-desc">Goa Trip · 12–15 Dec · watching your flight and hotel</p>
+
+      <div class="flight-status">
+        <div class="plane">✈️</div>
+        <div>
+          <div class="fs-t">6E-204 · BOM → GOI</div>
+          <div class="fs-d">Departure moved to 4:40 PM</div>
+        </div>
+        <div class="fs-tag">DELAYED</div>
+      </div>
+
+      <h2 class="section-title" style="font-size:14.5px;">Guardian is on it</h2>
+      <div class="steps" id="guardianSteps">
+        <div class="step">
+          <div class="dotline"><div class="sdot done">✓</div><div class="sline"></div></div>
+          <div class="stxt"><div class="st-t">Delay detected</div><div class="st-d">2 hr 5 min late — past your rule's limit</div></div>
+        </div>
+        <div class="step">
+          <div class="dotline"><div class="sdot done">✓</div><div class="sline"></div></div>
+          <div class="stxt"><div class="st-t">Found an alternative</div><div class="st-d">6E-884, departs 3:10 PM, +₹1,400</div></div>
+        </div>
+        <div class="step">
+          <div class="dotline"><div class="sdot active" id="rebookDot">…</div><div class="sline"></div></div>
+          <div class="stxt"><div class="st-t">Rebooking</div><div class="st-d" id="rebookText">Within your ₹2,000 limit — acting now</div></div>
+        </div>
+        <div class="step">
+          <div class="dotline"><div class="sdot" id="notifyDot">4</div></div>
+          <div class="stxt"><div class="st-t">Notify you &amp; the squad</div><div class="st-d">Everyone's tickets update automatically</div></div>
+        </div>
+      </div>
+      <button class="btn outline" style="margin-top:6px; margin-bottom:22px;" onclick="runGuardian()">Simulate: rebook now</button>
+
+      <h2 class="section-title">The Autonomy Dial</h2>
+      <p class="section-desc">How much can Myra do without asking? Set it by value, not once and for all.</p>
+      <div class="dial-option" data-level="l0" onclick="setDial(this,0)">
+        <div class="do-radio"></div>
+        <div class="do-txt">
+          <div class="do-t">L0 — Assist</div>
+          <div class="do-d">Finds and verifies. You review and pay every time.</div>
+        </div>
+      </div>
+      <div class="dial-option selected" data-level="l1" onclick="setDial(this,1)">
+        <div class="do-radio"></div>
+        <div class="do-txt">
+          <div class="do-t">L1 — Book, you pay</div>
+          <div class="do-d">Holds the reservation, sends you a payment request.</div>
+        </div>
+      </div>
+      <div class="dial-option" data-level="l2" onclick="setDial(this,2)">
+        <div class="do-radio"></div>
+        <div class="do-txt">
+          <div class="do-t">L2 — Full agentic, bounded</div>
+          <div class="do-d">Books and pays on its own, within a limit you set.</div>
+        </div>
+      </div>
+      <div class="dial-threshold" id="dialThreshold">Full autonomy under <b>₹2,000</b> · confirm between <b>₹2,000–₹20,000</b> · you review anything above <b>₹20,000</b></div>
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin:8px 0 20px; line-height:1.5;">Every action above L0 is announced immediately, reversible on request, and logged to your audit trail.</p>
+
+      <h2 class="section-title">Your rule</h2>
+      <div class="rule-box">"If my flight is delayed more than 2 hours, rebook me on the next one within ₹2,000 extra — and tell me."</div>
+
+      <div class="card">
+        <div class="toggle-row">
+          <div><div class="t">Auto-rebook flights</div><div class="d">Within the limit you set</div></div>
+          <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="t">Auto-hold hotel on delay</div><div class="d">Keeps your room past check-in</div></div>
+          <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="t">Ask before spending above limit</div><div class="d">Always your call above ₹2,000</div></div>
+          <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <button class="btn">Talk to a human</button>
+      </div>
+    </div>
+
+    <!-- MY ACCOUNT -->
+    <div class="screen" data-screen="memory">
+      <h2 class="section-title">My Account</h2>
+      <p class="section-desc">Your details, preferences and rewards — all in one place</p>
+
+      <div class="card" style="background:var(--teal-soft); border-color:#BFE3D7;">
+        <div style="font-size:11px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;">Goa, Dec — trip complete</div>
+        <div style="font-weight:700; font-size:14.5px; margin-bottom:6px;">3 new preferences learned</div>
+        <div style="font-size:12.5px; line-height:1.55; margin-bottom:12px;">beach shacks over fine dining · morning flights · homestays near Anjuna</div>
+        <button class="btn btn-sm" id="reviewBtn" onclick="reviewLearned()">Review</button>
+      </div>
+
+      <div class="card" style="display:flex; align-items:center; gap:12px;">
+        <div style="width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--red)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--serif); font-weight:700; font-size:16px; flex-shrink:0;">A</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700; font-size:14.5px;">Aisha Kapoor</div>
+          <div style="font-size:12px; color:var(--muted);">+91 98xxx xx210 · aisha@email.com</div>
+        </div>
+        <button class="btn-sm outline" style="border:1.5px solid var(--line); border-radius:10px; background:none; color:var(--muted); font-weight:600; cursor:pointer;">Edit</button>
+      </div>
+
+      <div class="tier-card">
+        <div class="tt">MMT Black · GoTribe Gold</div>
+        <div class="ts">OneCircle rewards across 13,000+ properties</div>
+        <div class="pts">2,140 <span class="ptsl">pts</span></div>
+      </div>
+
+      <h2 class="section-title" id="dnaHead">Travel DNA</h2>
+      <p class="section-desc">What Myra remembers about how you like to travel — yours to edit, anytime</p>
+      <div class="dna-chips" id="dnaChips">
+        <div class="dna-chip">🥗 Vegetarian only <span class="x" onclick="this.parentElement.remove()">✕</span></div>
+        <div class="dna-chip">🪟 Window seat <span class="x" onclick="this.parentElement.remove()">✕</span></div>
+        <div class="dna-chip">🏡 Prefers homestays <span class="x" onclick="this.parentElement.remove()">✕</span></div>
+        <div class="dna-chip">♿ Ramp access for Baba <span class="x" onclick="this.parentElement.remove()">✕</span></div>
+      </div>
+      <button class="btn outline" style="margin-bottom:20px;">+ Add a preference</button>
+
+      <h2 class="section-title">Trip memories</h2>
+      <p class="section-desc">Shared memories bring your friends' next reel back to us</p>
+      <div class="memory-card">
+        <div class="mthumb" style="background:linear-gradient(135deg,#1E7F72,#123);"></div>
+        <div><div class="mt">Coorg, monsoon weekend</div><div class="ms">Shared with 3 friends · 2 booked their own trip</div></div>
+      </div>
+      <div class="memory-card">
+        <div class="mthumb" style="background:linear-gradient(135deg,var(--gold),var(--red));"></div>
+        <div><div class="mt">Rishikesh, rafting &amp; ghats</div><div class="ms">Shared with 5 friends · 1 booked their own trip</div></div>
+      </div>
+
+      <div class="card" style="margin-top:6px;">
+        <div class="toggle-row">
+          <div><div class="t">Let Myra remember this trip</div><div class="d">Opt-in · you can turn this off anytime</div></div>
+          <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--muted); text-align:center; line-height:1.5;">Handled under India's Digital Personal Data Protection Act, 2023</p>
+    </div>
+
+  </div>
+
+  <!-- ============ MYRA SHEET ============ -->
+  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheetOutside(event)">
+    <div class="sheet">
+      <div class="handle"></div>
+      <h2 class="section-title">Ask Myra anything</h2>
+      <p class="section-desc">Try: "Plan a 3-day Goa trip for 4 friends" or drop in a reel link</p>
+      <button class="btn" onclick="closeSheet(); go('reel');">📎 I have a reel to check</button>
+      <button class="btn outline" style="margin-top:10px;" onclick="closeSheet(); go('squad');">👥 Start planning with my squad</button>
+      <button class="btn ghost" style="margin-top:14px;" onclick="closeSheet()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <div class="navbar">
+    <button class="navbtn active" data-nav="home" onclick="go('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11L12 4L21 11" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10V20H19V10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Home
+    </button>
+    <button class="navbtn" data-nav="reel" onclick="go('reel')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9L15 12L10 15V9Z" fill="currentColor" stroke="none"/></svg>
+      Reel-to-Pakka
+    </button>
+    <button class="navbtn" data-nav="squad" onclick="go('squad')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20C3 16.5 5.5 14.5 9 14.5C11.8 14.5 14 15.8 14.7 18" stroke-linecap="round"/><path d="M15.5 14.8C18.3 15.1 20 16.6 20 19.4" stroke-linecap="round"/></svg>
+      Squad
+    </button>
+    <button class="navbtn" data-nav="guardian" onclick="go('guardian')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L19 6V11C19 15.5 16 19 12 21C8 19 5 15.5 5 11V6L12 3Z" stroke-linejoin="round"/></svg>
+      Guardian
+    </button>
+    <button class="navbtn" data-nav="memory" onclick="go('memory')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20C4.5 15.8 7.8 13.5 12 13.5C16.2 13.5 19.5 15.8 19.5 20" stroke-linecap="round"/></svg>
+      Account
+    </button>
+  </div>
+</div>
+
+<script>
+  function go(name){
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
+    document.querySelector('.screens').scrollTo(0,0);
+    if(name === 'guardian') showGuardian('live');
+  }
+
+  /* ----- Guardian: live trip ----- */
+  let tripPlan = [
+    { t:'09:30', title:'Baba au Rhum breakfast', d:'Booked', state:'done' },
+    { t:'13:00', title:'Grand Island snorkelling', d:'Confirmed, pickup 12:30', state:'done', id:'snorkel' },
+    { t:'17:40', title:'Anjuna sunset', d:'20 min away', state:'next' },
+    { t:'20:00', title:'Curlies dinner', d:'Table for 4 held', state:'todo' }
+  ];
+  let tripLog = [
+    { when:'07:30', text:'Checked your 2 bookings — all clear' },
+    { when:'08:40', text:'Reconfirmed snorkelling pickup for 12:30' }
+  ];
+
+  function renderPlan(){
+    const el = document.getElementById('todayPlan');
+    el.innerHTML = tripPlan.map((it, i) => {
+      const last = i === tripPlan.length - 1;
+      const dot = it.state === 'next' ? '→' : (it.state === 'todo' ? '·' : '✓');
+      const dotCls = it.state === 'next' ? 'active' : (it.state === 'todo' ? '' : 'done');
+      const tag = it.state === 'next' ? '<span class="next-tag">Next up</span>'
+                : it.state === 'moved' ? '<span class="moved-tag">Moved</span>' : '';
+      return `<div class="step ${it.state === 'next' ? 'next' : ''}">
+        <div class="dotline"><div class="sdot ${dotCls}">${dot}</div>${last ? '' : '<div class="sline"></div>'}</div>
+        <div class="stxt"><div class="st-t"><span class="tm">${it.t}</span> · ${it.title}${tag}</div><div class="st-d">${it.d}</div></div>
+      </div>`;
+    }).join('');
+  }
+  function renderLog(){
+    document.getElementById('gLog').innerHTML = tripLog.map(l => `<div class="activity"><b>${l.when}</b> · ${l.text}</div>`).join('');
+  }
+  function resolveNudge(move){
+    const nudge = document.getElementById('nudge');
+    if(move){
+      tripPlan = tripPlan.filter(i => i.id !== 'snorkel');
+      tripPlan.push({ t:'Tomorrow 13:00', title:'Grand Island snorkelling', d:'Moved by Guardian · same price · slot confirmed', state:'moved' });
+      tripLog.push({ when:'Just now', text:'Moved snorkelling to tomorrow 13:00 — same price' });
+      nudge.className = 'nudge done';
+      nudge.innerHTML = '<div class="nudge-t">✓ Moved to tomorrow 13:00</div><div class="nudge-d">Same price. I’ll keep watching the forecast for you.</div>';
+      renderPlan();
+    } else {
+      tripLog.push({ when:'Just now', text:'Kept snorkelling at 13:00 — your call' });
+      nudge.className = 'nudge done';
+      nudge.innerHTML = '<div class="nudge-t">Got it — keeping the plan</div><div class="nudge-d">I’ll keep watching the forecast for you.</div>';
+    }
+    renderLog();
+  }
+  function addExpense(){
+    document.getElementById('expWrap').innerHTML = '<div class="exp-done">✓ Added ₹1,200 · cab to Anjuna · ₹300 each</div>';
+  }
+  function showGuardian(view){
+    document.getElementById('gLive').style.display = view === 'live' ? 'block' : 'none';
+    document.getElementById('gDelay').style.display = view === 'delay' ? 'block' : 'none';
+    document.querySelector('.screens').scrollTo(0,0);
+  }
+  renderPlan();
+  renderLog();
+
+  /* ----- Account: close the loop ----- */
+  let learnedAdded = false;
+  function reviewLearned(){
+    if(!learnedAdded){
+      learnedAdded = true;
+      const chips = document.getElementById('dnaChips');
+      ['🏖️ Beach shacks over fine dining', '🌅 Morning flights', '🏡 Homestays near Anjuna'].forEach(t => {
+        const d = document.createElement('div');
+        d.className = 'dna-chip';
+        d.innerHTML = t + ' <span class="new-tag">NEW</span> <span class="x" onclick="this.parentElement.remove()">✕</span>';
+        chips.appendChild(d);
+      });
+      const b = document.getElementById('reviewBtn');
+      b.textContent = 'Added to Travel DNA ✓';
+      b.style.background = 'var(--teal)';
+    }
+    document.getElementById('dnaHead').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function openSheet(){ document.getElementById('sheetBackdrop').classList.add('show'); }
+  function closeSheet(){ document.getElementById('sheetBackdrop').classList.remove('show'); }
+  function closeSheetOutside(e){ if(e.target.id === 'sheetBackdrop') closeSheet(); }
+
+  function simulateReel(){
+    document.getElementById('linkPreview').classList.add('show');
+    document.getElementById('loadingRow').classList.add('show');
+    document.getElementById('verifyList').classList.remove('show');
+    setTimeout(() => {
+      document.getElementById('loadingRow').classList.remove('show');
+      document.getElementById('verifyList').classList.add('show');
+    }, 1400);
+  }
+
+  function votePoll(el, pct){
+    document.querySelectorAll('.poll-opt').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  const dialCopy = [
+    'Reviews everything before it happens — nothing books or pays without you.',
+    'Full autonomy under <b>₹2,000</b> · confirm between <b>₹2,000–₹20,000</b> · you review anything above <b>₹20,000</b>',
+    'Books and pays on its own up to <b>₹20,000</b> per action, using your pre-authorised UPI limit.'
+  ];
+  function setDial(el, idx){
+    document.querySelectorAll('.dial-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('dialThreshold').innerHTML = dialCopy[idx];
+  }
+
+  // Fare hold countdown
+  let secs = 2*3600 + 44*60 + 58;
+  setInterval(() => {
+    if(secs <= 0) return;
+    secs--;
+    const h = String(Math.floor(secs/3600)).padStart(2,'0');
+    const m = String(Math.floor((secs%3600)/60)).padStart(2,'0');
+    const s = String(secs%60).padStart(2,'0');
+    const el = document.getElementById('fareTimer');
+    if(el) el.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+
+  function runGuardian(){
+    const dot = document.getElementById('rebookDot');
+    const txt = document.getElementById('rebookText');
+    const notify = document.getElementById('notifyDot');
+    dot.classList.remove('active');
+    dot.classList.add('done');
+    dot.textContent = '✓';
+    txt.textContent = 'Rebooked on 6E-884 · 3:10 PM';
+    setTimeout(() => {
+      notify.classList.add('done');
+      notify.textContent = '✓';
+    }, 500);
+  }
+</script>
+</body>
+</html>
